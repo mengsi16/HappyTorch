@@ -73,6 +73,8 @@ class TaskDetailResponse(BaseModel):
     function_name: str
     description: str
     template: str
+    signature: str
+    example: str
     tests_count: int
 
 
@@ -108,30 +110,83 @@ def _get_task_description(task_id: str) -> str:
     return ""
 
 
-def _get_template_code(task_id: str) -> str:
-    """Extract template code from notebook."""
+def _extract_signature_from_markdown(markdown: str) -> str:
+    """Extract function signature from markdown."""
+    import re
+    # Look for signature in code block after "### Signature"
+    pattern = r'###\s*Signature\s*```python\s*(.*?)```'
+    match = re.search(pattern, markdown, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return ""
+
+
+def _extract_example_from_markdown(markdown: str) -> str:
+    """Extract example from markdown."""
+    import re
+    # Look for example after "### Example"
+    pattern = r'###\s*Example\s*```\s*(.*?)```'
+    match = re.search(pattern, markdown, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return ""
+
+
+def _get_template_code(task_id: str) -> tuple[str, str, str]:
+    """Extract template code, signature, and example from notebook.
+    
+    Returns: (template_code, signature, example)
+    """
     template_path = Path(__file__).parent.parent / "templates" / f"{task_id}.ipynb"
+    
+    signature = ""
+    example = ""
+    template_code = ""
+    markdown_content = ""
     
     if template_path.exists():
         try:
             with open(template_path, encoding="utf-8") as f:
                 nb = json.load(f)
+            
+            # Extract markdown content
+            for cell in nb.get("cells", []):
+                if cell.get("cell_type") == "markdown":
+                    source = "".join(cell.get("source", []))
+                    markdown_content += source + "\n\n"
+            
+            # Extract signature and example from markdown
+            signature = _extract_signature_from_markdown(markdown_content)
+            example = _extract_example_from_markdown(markdown_content)
+            
+            # Extract template code
             for cell in nb.get("cells", []):
                 if cell.get("cell_type") == "code":
                     source = "".join(cell.get("source", []))
                     if "TODO" in source or "def " in source or "class " in source:
-                        return source.strip()
+                        # Skip import-only cells
+                        if source.strip().startswith("import") and "\n" not in source.strip():
+                            continue
+                        template_code = source.strip()
+                        break
         except Exception:
             pass
     
-    # Generate template
-    task = get_task(task_id)
-    if task:
-        fn = task["function_name"]
-        if fn[0].isupper():
-            return f"class {fn}:\n    def __init__(self, ...):\n        # TODO: implement\n        pass\n"
-        return f"def {fn}(...):\n    # TODO: implement\n    pass\n"
-    return "# Template not found"
+    # Generate template if not found
+    if not template_code:
+        task = get_task(task_id)
+        if task:
+            fn = task["function_name"]
+            if fn[0].isupper():
+                template_code = f"class {fn}:\n    def __init__(self, ...):\n        # TODO: implement\n        pass\n"
+                if not signature:
+                    signature = f"class {fn}:\n    def __init__(self, ...)"
+            else:
+                template_code = f"def {fn}(...):\n    # TODO: implement\n    pass\n"
+                if not signature:
+                    signature = f"def {fn}(...)"
+    
+    return template_code, signature, example
 
 
 def _run_tests(task_id: str, code: str) -> tuple[int, int, float, list[dict], str]:
@@ -248,6 +303,8 @@ async def get_task_detail(task_id: str):
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     
+    template, signature, example = _get_template_code(task_id)
+    
     return {
         "id": task_id,
         "title": task["title"],
@@ -255,7 +312,9 @@ async def get_task_detail(task_id: str):
         "hint": task["hint"],
         "function_name": task["function_name"],
         "description": _get_task_description(task_id),
-        "template": _get_template_code(task_id),
+        "template": template,
+        "signature": signature,
+        "example": example,
         "tests_count": len(task["tests"]),
     }
 

@@ -1,10 +1,10 @@
 # 🔥 HappyTorch
 
-**Crack the PyTorch interview — now with LLM, Diffusion, and PEFT coverage.**
+**A PyTorch coding practice platform — covering LLM, Diffusion, PEFT, and more**
 
-Practice implementing operators and architectures from scratch — the exact skills top ML teams test for.
+A friendly environment to help you deeply understand deep learning components through hands-on practice.
 
-*Like LeetCode, but for tensors. Self-hosted. Jupyter-based. Instant feedback.*
+*Like LeetCode, but for tensors. Self-hosted. Supports both Jupyter and Web interfaces. Instant feedback.*
 
 [![PyTorch](https://img.shields.io/badge/PyTorch-ee4c2c?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
 [![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=for-the-badge&logo=jupyter&logoColor=white)](https://jupyter.org)
@@ -33,19 +33,42 @@ We sincerely thank the original author for creating such a well-designed practic
 
 ## 🎯 Why HappyTorch?
 
-Top companies (Meta, Google DeepMind, OpenAI, etc.) expect ML engineers to implement core operations **from memory on a whiteboard**. Reading papers isn't enough — you need to write `softmax`, `LayerNorm`, `MultiHeadAttention`, and full Transformer blocks cold.
+If you're learning deep learning or preparing for machine learning interviews, you might have encountered these challenges:
 
-HappyTorch gives you a **structured practice environment** with:
+- You've read many papers, but don't know where to start when it comes to actually writing code
+- You're asked to implement `softmax` or `MultiHeadAttention` from scratch in an interview, and your mind goes blank
+- You want to deeply understand technologies like Transformer, LoRA, Diffusion, but feel like you lack systematic practice
+
+**HappyTorch** aims to provide a friendly practice environment. We believe:
+
+> "True understanding comes from hands-on practice."
+
+You can only truly grasp the details of these algorithms by implementing them yourself. This project brings together 24 carefully selected problems, from basic activation functions to complex Transformer components, helping you improve step by step.
+
+### Is this project for you?
+
+- ✅ You're a deep learning beginner looking to solidify your fundamentals
+- ✅ You're preparing for ML/AI related interviews
+- ✅ You want to understand PyTorch internals
+- ✅ You're interested in cutting-edge technologies like LLM, Diffusion, PEFT
+
+### What we offer
 
 | | Feature | |
 |---|---|---|
-| 🧩 | **24 curated problems** | Covering fundamentals, attention, LLM, Diffusion, and PEFT |
-| ⚖️ | **Automated judge** | Correctness checks, gradient verification, and timing |
-| 🎨 | **Instant feedback** | Colored pass/fail per test case, just like competitive programming |
-| 💡 | **Hints when stuck** | Nudges without full spoilers |
-| 📖 | **Reference solutions** | Study optimal implementations after your attempt |
-| 📊 | **Progress tracking** | What you've solved, best times, and attempt counts |
-| 🌐 | **Web interface** | LeetCode-like UI with Monaco editor, random/sequential mode |
+| 🧩 | **24 curated problems** | From basics to advanced, covering mainstream tech stacks |
+| ⚖️ | **Auto-grading** | Instant feedback showing what you got right and where to improve |
+| 🎨 | **Clear test results** | Each test case displayed separately for easy debugging |
+| 💡 | **Helpful hints** | Get nudges when stuck, not full spoilers |
+| 📖 | **Reference solutions** | Compare and learn after your own attempt |
+| 📊 | **Progress tracking** | Record your learning journey |
+| 🌐 | **Web interface** | LeetCode-like practice experience |
+
+### A gentle reminder
+
+This project is **not** a shortcut to pass interviews, nor does it teach you "how to ace interviews." It's simply a practice tool. Real progress comes from your own thinking and hands-on practice.
+
+If you find this project useful, a Star ⭐ would be appreciated. Feel free to share it with others who are learning. Let's grow together!
 
 ---
 
@@ -60,10 +83,10 @@ HappyTorch gives you a **structured practice environment** with:
 
 ```bash
 # Create a new conda environment
-conda create -n torchcode python=3.11 -y
+conda create -n happytorch python=3.11 -y
 
 # Activate the environment
-conda activate torchcode
+conda activate happytorch
 ```
 
 ### Step 2: Install Dependencies
@@ -80,7 +103,7 @@ pip install jupyterlab numpy
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/HappyTorch.git
+git clone https://github.com/Rivflyyy/HappyTorch
 cd HappyTorch
 
 # Install the judge engine in development mode
@@ -90,13 +113,11 @@ pip install -e .
 ### Step 4: Prepare Notebooks
 
 ```bash
-# Create notebooks directory if it doesn't exist
-mkdir -p notebooks
-
-# Copy templates and solutions
-cp -r templates/* notebooks/
-cp -r solutions/* notebooks/
+# Create notebooks directory and copy templates/solutions
+python prepare_notebooks.py
 ```
+
+> **Note for Windows users:** This script works on all platforms (Windows, macOS, Linux).
 
 ### Step 5: Launch JupyterLab
 
@@ -159,12 +180,15 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install jupyterlab numpy
 pip install -e .
 
-# 3a. Launch Web Mode (recommended for beginners)
+# 3. Prepare notebooks
+python prepare_notebooks.py
+
+# 4a. Launch Web Mode (recommended for beginners)
 pip install fastapi uvicorn python-multipart
 python start_web.py
 # Open http://localhost:8000
 
-# 3b. Or launch Jupyter Mode (for more flexibility)
+# 4b. Or launch Jupyter Mode (for more flexibility)
 python start_jupyter.py
 # Open http://localhost:8888
 ```
@@ -175,7 +199,7 @@ python start_jupyter.py
 
 ### 🧱 Fundamentals — "Implement X from scratch"
 
-The bread and butter of ML coding interviews. You'll be asked to write these without `torch.nn`.
+Common basics you'll encounter in interviews. Implement these without using `torch.nn`.
 
 | # | Problem | What You'll Implement | Difficulty | Key Concepts |
 |:---:|---------|----------------------|:----------:|--------------|
@@ -186,9 +210,9 @@ The bread and butter of ML coding interviews. You'll be asked to write these wit
 | 7 | BatchNorm | `my_batch_norm(x, γ, β)` | ![Medium](https://img.shields.io/badge/Medium-FF9800?style=flat-square) | Batch vs layer statistics, train/eval behavior |
 | 8 | RMSNorm | `rms_norm(x, weight)` | ![Medium](https://img.shields.io/badge/Medium-FF9800?style=flat-square) | LLaMA-style norm, simpler than LayerNorm |
 
-### 🧠 Attention Mechanisms — The heart of modern ML interviews
+### 🧠 Attention Mechanisms — The heart of modern ML
 
-If you're interviewing for any role touching LLMs or Transformers, expect at least one of these.
+Helpful if you're preparing for LLM or Transformer related roles.
 
 | # | Problem | What You'll Implement | Difficulty | Key Concepts |
 |:---:|---------|----------------------|:----------:|--------------|
@@ -199,7 +223,9 @@ If you're interviewing for any role touching LLMs or Transformers, expect at lea
 | 11 | Sliding Window Attention | `sliding_window_attention(Q, K, V, w)` | ![Hard](https://img.shields.io/badge/Hard-F44336?style=flat-square) | Mistral-style local attention, O(n·w) complexity |
 | 12 | Linear Attention | `linear_attention(Q, K, V)` | ![Hard](https://img.shields.io/badge/Hard-F44336?style=flat-square) | Kernel trick, `φ(Q)(φ(K)^TV)`, O(n·d²) |
 
-### 🏗️ Full Architecture — Put it all together
+### 🏗️ Full Architecture — Putting it all together
+
+Combine what you've learned to implement complete components.
 
 | # | Problem | What You'll Implement | Difficulty | Key Concepts |
 |:---:|---------|----------------------|:----------:|--------------|
@@ -380,7 +406,15 @@ HappyTorch adds 11 new problems covering:
 <details>
 <summary><b>Who is this for?</b></summary>
 <br>
-Anyone preparing for ML/AI engineering interviews at top tech companies, or anyone who wants to deeply understand how PyTorch operations work under the hood. The V2 additions are especially relevant for LLM and Diffusion model interviews.
+
+This project is primarily for:
+
+- Beginners learning deep learning who want to solidify their fundamentals
+- Job seekers preparing for ML/AI related interviews
+- Developers who want to understand PyTorch internals
+- Practitioners interested in technologies like LLM, Diffusion, PEFT
+
+Whether you're just starting out or have some experience, you can find practice problems suited to your level.
 </details>
 
 ---
@@ -395,9 +429,9 @@ The original TorchCode project is also licensed under MIT.
 
 <div align="center">
 
-**Built for engineers who want to deeply understand what they build.**
+**Learning is a long journey. Hope this little project can help you along the way.**
 
-If this helped your interview prep, consider giving it a ⭐
+If you find it useful, a Star ⭐ would be appreciated.
 
 **Special thanks to [TorchCode](https://github.com/duoan/TorchCode) for the original foundation.**
 

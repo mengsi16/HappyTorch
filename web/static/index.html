@@ -348,6 +348,65 @@
             font-size: 13px;
         }
 
+        /* Signature and Example Section */
+        .signature-section {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .signature-header {
+            padding: 10px 16px;
+            background: rgba(88, 166, 255, 0.1);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .signature-content {
+            padding: 12px 16px;
+        }
+
+        .signature-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+        }
+
+        .example-section {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .example-header {
+            padding: 10px 16px;
+            background: rgba(63, 185, 80, 0.1);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example-content {
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+
         .hint-box {
             background: rgba(210, 153, 34, 0.1);
             border: 1px solid rgba(210, 153, 34, 0.3);
@@ -672,6 +731,20 @@
                 </div>
 
                 <div class="description-panel" id="descriptionTab" style="display: none;">
+                    <div id="signatureSection" class="signature-section" style="display: none;">
+                        <div class="signature-header">
+                            <i class="ri-code-line"></i> Function Signature
+                        </div>
+                        <div class="signature-content">
+                            <pre class="signature-code" id="signatureCode"></pre>
+                        </div>
+                    </div>
+                    <div id="exampleSection" class="example-section" style="display: none;">
+                        <div class="example-header">
+                            <i class="ri-terminal-box-line"></i> Example
+                        </div>
+                        <div class="example-content" id="exampleCode"></div>
+                    </div>
                     <div id="descriptionContent"></div>
                     <div class="hint-box">
                         <div class="hint-box-title">
@@ -907,6 +980,26 @@
 
             // Set editor content
             editor.setValue(task.template);
+
+            // Set signature
+            const sigSection = document.getElementById('signatureSection');
+            const sigCode = document.getElementById('signatureCode');
+            if (task.signature) {
+                sigCode.textContent = task.signature;
+                sigSection.style.display = 'block';
+            } else {
+                sigSection.style.display = 'none';
+            }
+
+            // Set example
+            const exSection = document.getElementById('exampleSection');
+            const exCode = document.getElementById('exampleCode');
+            if (task.example) {
+                exCode.textContent = task.example;
+                exSection.style.display = 'block';
+            } else {
+                exSection.style.display = 'none';
+            }
 
             // Set description
             document.getElementById('descriptionContent').innerHTML = `<pre>${escapeHtml(task.description || '暂无描述')}</pre>`;

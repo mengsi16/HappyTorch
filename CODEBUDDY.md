@@ -14,7 +14,7 @@ pip install -e .
 pip install fastapi uvicorn python-multipart
 
 # Prepare notebooks (for Jupyter mode)
-mkdir -p notebooks && cp -r templates/* notebooks/ && cp -r solutions/* notebooks/
+python prepare_notebooks.py
 
 # Start Web Mode (LeetCode-like interface)
 python start_web.py
