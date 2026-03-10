@@ -1,0 +1,8 @@
+def my_softmax(x: torch.Tensor, dim: int = -1) -> torch.Tensor:
+    # 上溢：当 x 的某些元素很大（如 > 100），exp(x) 超出浮点数表示范围，变为 inf。
+    # 下溢：当 x 的某些元素很小（如 < -100），exp(x) 接近 0，可能丢失精度。
+    # 必须使用 dim 参数并保持维度一致性（keepdim=True）来获得正确的归一化。
+    # 减去最大值以提高数值稳定性（保持 keepdim 以便广播）
+    x_max = x.max(dim=dim, keepdim=True)[0]   # [0] 提取最大值，忽略索引
+    exp_x = torch.exp(x - x_max)               # 稳定化后的指数
+    return exp_x / exp_x.sum(dim=dim, keepdim=True)

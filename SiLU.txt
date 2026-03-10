@@ -1,0 +1,8 @@
+# ✏️ YOUR IMPLEMENTATION HERE
+def sigmoid(x: torch.Tensor) -> torch.Tensor:
+    # 当x->-∞时，sigmoid分子无穷大，可能溢出，需要上下同乘exp(x)保证不上溢
+    return torch.where(x<0, torch.exp(x)/(1+torch.exp(x)), 1/(1+torch.exp(-x)))
+
+
+def silu(x: torch.Tensor) -> torch.Tensor:
+    return x * sigmoid(x)

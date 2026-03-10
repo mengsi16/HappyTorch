@@ -1,0 +1,11 @@
+def my_batch_norm(x: torch.Tensor, gamma: torch.Tensor, beta: torch.Tensor, eps: float = 1e-5) -> torch.Tensor:
+    # 计算沿 dim=0 的均值和方差，keepdim 保持维度以便广播
+    mean = x.mean(dim=0, keepdim=True)               # 形状: (1, ...)
+    var = x.var(dim=0, unbiased=False, keepdim=True) # 有偏方差（除以 N 而不是 N-1）
+    
+    # 归一化
+    x_norm = (x - mean) / torch.sqrt(var + eps)
+    
+    # 仿射变换（gamma 和 beta 通过广播对齐）
+    out = gamma * x_norm + beta
+    return out

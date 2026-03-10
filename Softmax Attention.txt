@@ -1,0 +1,22 @@
+import math
+
+def scaled_dot_product_attention(Q: torch.Tensor, K: torch.Tensor, V: torch.Tensor) -> torch.Tensor:
+    """
+    实现缩放点积注意力机制。
+    
+    参数:
+        Q: 形状 (batch_size, seq_q, d_k) 的查询张量
+        K: 形状 (batch_size, seq_k, d_k) 的键张量
+        V: 形状 (batch_size, seq_k, d_v) 的值张量
+    
+    返回:
+        output: 形状 (batch_size, seq_q, d_v) 的注意力输出
+    """
+    d_k = Q.size(-1)  # 查询/键的维度
+    # 计算 Q 与 K^T 的批量点积，得到注意力分数，形状 (batch, seq_q, seq_k)
+    scores = torch.bmm(Q, K.transpose(-2, -1)) / math.sqrt(d_k)
+    # 在最后一个维度（键的序列长度）上应用 softmax，得到注意力权重
+    attn_weights = torch.softmax(scores, dim=-1)
+    # 将权重与值相乘，得到输出
+    output = torch.bmm(attn_weights, V)
+    return output

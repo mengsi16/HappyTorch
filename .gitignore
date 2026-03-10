@@ -10,3 +10,4 @@ notebooks/
 CLAUDE.md
 CODEBUDDY.md
 web-plugin/
+*.txt
